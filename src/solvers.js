@@ -87,7 +87,23 @@ window.countNQueensSolutions = function(n) {
   var blockedMajor = 0;
   var blockedMinor = 0;
   var solutionCount = 0;
-  goDeeper(0);
+  for(var k = 0; k<=n/2-1; k++){
+    blockedColumns = blockedColumns|(1 << n-k-1);
+    blockedMajor = blockedMajor|(1 << n-k-1);
+    blockedMinor = blockedMinor|(1 << n-k-1);
+    goDeeper(1);
+    blockedColumns = blockedColumns^(1 << n-k-1);
+    blockedMajor = blockedMajor^(1 << n-k-1);
+    blockedMinor = blockedMinor^(1 << n-k-1);
+  }
+  solutionCount*=2;
+  if(n%2===1){
+    blockedColumns = blockedColumns|(1 << n-k-1);
+    blockedMajor = blockedMajor|(1 << n-k-1);
+    blockedMinor = blockedMinor|(1 << n-k-1);
+    goDeeper(1);
+
+  }
 
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
