@@ -83,13 +83,27 @@ window.countNQueensSolutions = function(n) {
   if (n === 0) {
     return 1;
   }
-  var board = new Board({'n': n});
   var blockedColumns = [];
   var blockedMajor = [];
   var blockedMinor = [];
   var solutionCount = 0;
-  goDeeper(0);
-
+  for(var j=0; j<Math.floor(n/2); j++){
+    blockedColumns.push(j);
+    blockedMajor.push(j);
+    blockedMinor.push(j);
+    goDeeper(1);
+    blockedColumns.pop();
+    blockedMajor.pop();
+    blockedMinor.pop();
+  }
+  solutionCount*=2;
+  if(n%2===1){
+    blockedColumns.push(j);
+    blockedMajor.push(j);
+    blockedMinor.push(j);
+    goDeeper(1);
+  }
+  
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 
@@ -99,12 +113,10 @@ window.countNQueensSolutions = function(n) {
         if (i === n-1){
           solutionCount++;
         } else {
-          board.togglePiece(i, j);
           blockedColumns.push(j);
           blockedMajor.push(j-i);
           blockedMinor.push(j+i);
           goDeeper(i+1);
-          board.togglePiece(i, j);
           blockedColumns.pop();
           blockedMajor.pop();
           blockedMinor.pop();
