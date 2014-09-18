@@ -1,7 +1,7 @@
 describe('solvers', function() {
   window.displayBoard = function() {};
 
-  xdescribe('findNRooksSolution()', function() {
+  describe('findNRooksSolution()', function() {
 
     it('finds a valid solution for n of 1-8', function() {
       _.range(1, 9).map(function(n) {
@@ -14,7 +14,7 @@ describe('solvers', function() {
 
   });
 
-  xdescribe('countNRooksSolutions()', function() {
+  describe('countNRooksSolutions()', function() {
 
     it('finds the number of valid solutions for n of 1-8', function() {
       _.range(1, 9).map(function(n) {
@@ -40,7 +40,7 @@ describe('solvers', function() {
 
   });
 
-  xdescribe('countNQueensSolutions()', function() {
+  describe('countNQueensSolutions()', function() {
 
     it('finds the number of valid solutions for n of 0-8', function() {
       _.range(0, 9).map(function(n) {

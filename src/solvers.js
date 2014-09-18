@@ -14,7 +14,6 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
 window.findNRooksSolution = function(n) {
-  // Base case
   var board = new Board({'n': n});
 
   for (var i = 0; i < n; i++) {
@@ -31,7 +30,9 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = _.reduce(_.range(2,n+1),function(a,b){
+    return a*b;
+  },1);
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
@@ -79,8 +80,36 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  if (n === 0) {
+    return 1;
+  }
+  var board = new Board({'n': n});
+  var solutionCount = 0;
+  goDeeper(0);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
+
+  function goDeeper(i){
+    for (var j = 0; j < n; j++) {
+      board.togglePiece(i, j);
+      if (!board.hasAnyQueenConflictsOn(i,j)) {
+        if (i === n-1) {
+          solutionCount++;
+        } else {
+          goDeeper(i+1);
+        }
+      }
+      board.togglePiece(i, j);
+    };
+  }
+
 };
+
+window.timeIt = function(f){
+  return function() {
+    var start = Date.now();
+    f.apply(this, arguments);
+    console.log('function took ' + (Date.now()-start) + 'ms');
+  }
+}
