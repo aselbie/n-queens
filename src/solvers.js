@@ -84,6 +84,9 @@ window.countNQueensSolutions = function(n) {
     return 1;
   }
   var board = new Board({'n': n});
+  var blockedColumns = [];
+  var blockedMajor = [];
+  var blockedMinor = [];
   var solutionCount = 0;
   goDeeper(0);
 
@@ -92,16 +95,38 @@ window.countNQueensSolutions = function(n) {
 
   function goDeeper(i){
     for (var j = 0; j < n; j++) {
-      board.togglePiece(i, j);
-      if (!board.hasAnyQueenConflictsOn(i,j)) {
-        if (i === n-1) {
+      if(blockedColumns.indexOf(j)<0 && blockedMajor.indexOf(j-i)<0 && blockedMinor.indexOf(j+i)<0){
+        if (i === n-1){
           solutionCount++;
         } else {
+          board.togglePiece(i, j);
+          blockedColumns.push(j);
+          blockedMajor.push(j-i);
+          blockedMinor.push(j+i);
           goDeeper(i+1);
+          board.togglePiece(i, j);
+          blockedColumns.pop();
+          blockedMajor.pop();
+          blockedMinor.pop();
         }
       }
-      board.togglePiece(i, j);
     };
+      // j is not in blockedColumns
+      // if j-i is not in the blockedMajorDiagonals array
+      // if j+i is not in the blockedMinorDiagonals array
+        // board.togglePiece(i, j);
+          // Push j to blockedColumns array;
+          // Push j - i to blockedMajorDiagonals array
+          // Push j + i to blockedMinorDiagonals array
+
+          // if (i === n-1) {
+            // solutionCount++;
+          // } else {
+            // goDeeper(i+1);
+          // }
+
+        // board.togglePiece(i, j);
+        // pop from our blocked arrays
   }
 
 };
