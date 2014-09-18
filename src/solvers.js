@@ -83,65 +83,44 @@ window.countNQueensSolutions = function(n) {
   if (n === 0) {
     return 1;
   }
-  var blockedColumns = [];
-  var blockedMajor = [];
-  var blockedMinor = [];
+  var blockedColumns = 0;
+  var blockedMajor = 0;
+  var blockedMinor = 0;
   var solutionCount = 0;
-  for(var j=0; j<Math.floor(n/2); j++){
-    blockedColumns.push(j);
-    blockedMajor.push(j);
-    blockedMinor.push(j);
-    goDeeper(1);
-    blockedColumns.pop();
-    blockedMajor.pop();
-    blockedMinor.pop();
-  }
-  solutionCount*=2;
-  if(n%2===1){
-    blockedColumns.push(j);
-    blockedMajor.push(j);
-    blockedMinor.push(j);
-    goDeeper(1);
-  }
-  
+  goDeeper(0);
+
+
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 
   function goDeeper(i){
     for (var j = 0; j < n; j++) {
-      if(blockedColumns.indexOf(j)<0 && blockedMajor.indexOf(j-i)<0 && blockedMinor.indexOf(j+i)<0){
+      var idx = n-j-1;
+      if(
+        (blockedColumns|(1 << idx)) !== blockedColumns
+        && (blockedMajor|(1 << idx+i)) !== blockedMajor
+        && (blockedMinor|(1 << idx-i)) !== blockedMinor
+        ){
         if (i === n-1){
           solutionCount++;
         } else {
-          blockedColumns.push(j);
-          blockedMajor.push(j-i);
-          blockedMinor.push(j+i);
+          blockedColumns = blockedColumns|(1 << idx);
+          blockedMajor = blockedMajor|(1 << idx+i);
+          blockedMinor = blockedMinor|(1 << idx-i);
           goDeeper(i+1);
-          blockedColumns.pop();
-          blockedMajor.pop();
-          blockedMinor.pop();
+          blockedColumns = blockedColumns^(1 << idx);
+          blockedMajor = blockedMajor^(1 << idx+i);
+          blockedMinor = blockedMinor^(1 << idx-i);
         }
       }
     };
-      // j is not in blockedColumns
-      // if j-i is not in the blockedMajorDiagonals array
-      // if j+i is not in the blockedMinorDiagonals array
-        // board.togglePiece(i, j);
-          // Push j to blockedColumns array;
-          // Push j - i to blockedMajorDiagonals array
-          // Push j + i to blockedMinorDiagonals array
-
-          // if (i === n-1) {
-            // solutionCount++;
-          // } else {
-            // goDeeper(i+1);
-          // }
-
-        // board.togglePiece(i, j);
-        // pop from our blocked arrays
   }
 
 };
+
+Math.base = function base(n, to, from) {
+     return parseInt(n, from || 10).toString(to);
+}
 
 window.timeIt = function(f){
   return function() {
