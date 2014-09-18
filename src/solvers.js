@@ -14,7 +14,14 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
 window.findNRooksSolution = function(n) {
-  var solution = undefined; //fixme
+  // Base case
+  var board = new Board({'n': n});
+
+  for (var i = 0; i < n; i++) {
+    board.rows()[i][i] = 1;
+  };
+
+  var solution = board.rows(); //fixme
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
@@ -34,10 +41,39 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+
+  var board = new Board({'n': n});
+  goDeeper(0);
+
+  var solution = board.rows(); //fixme
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
+
+  function goDeeper(i){
+    for (var j = 0; j < n; j++) {
+      board.togglePiece(i, j);
+      if (!board.hasAnyQueenConflictsOn(i,j)) {
+        if (i === n-1) {
+          break;
+        } else {
+          goDeeper(i+1);
+        }
+      }
+      board.togglePiece(i, j);
+    };
+  }
+  // make a board of size n
+  // recursiveFunction(i)
+    // For each square in row i
+      // Place a queen at that square
+      // If there are no conflicts
+        // If this is the last row
+          // return the board
+        // If this is not the last row
+          // recursiveFunction(i+1)
+      // Remove the queen from that square
+  // return the board;
 };
 
 
