@@ -80,63 +80,30 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  if (n === 0) {
-    return 1;
-  }
-  var blockedColumns = 0;
-  var blockedMajor = 0;
-  var blockedMinor = 0;
+  var start = Date.now();
+  var workers = [];
   var solutionCount = 0;
-  for(var k = 0; k<=n/2-1; k++){
-    blockedColumns = blockedColumns|(1 << n-k-1);
-    blockedMajor = blockedMajor|(1 << n-k-1);
-    blockedMinor = blockedMinor|(1 << n-k-1);
-    goDeeper(1);
-    blockedColumns = blockedColumns^(1 << n-k-1);
-    blockedMajor = blockedMajor^(1 << n-k-1);
-    blockedMinor = blockedMinor^(1 << n-k-1);
-  }
-  solutionCount*=2;
-  if(n%2===1){
-    blockedColumns = blockedColumns|(1 << n-k-1);
-    blockedMajor = blockedMajor|(1 << n-k-1);
-    blockedMinor = blockedMinor|(1 << n-k-1);
-    goDeeper(1);
 
+  var launchSolverWorker = function(k, multiple) {
+    workers[k] = new Worker('src/solverWorker.js');
+    workers[k].addEventListener('message', function(e){
+      solutionCount += e.data * multiple;
+      console.log('Found ' + solutionCount + ' solutions in ' + (Date.now()- start) + 'ms');
+    }, false);
+    workers[k].postMessage({'n': n, 'k': k});
   }
 
+  for(var k = 0; k <= n / 2 - 1; k++){
+    launchSolverWorker(k, 2);
+  }
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  solutionCount *= 2;
 
-  function goDeeper(i){
-    for (var j = 0; j < n; j++) {
-      var idx = n-j-1;
-      if(
-        (blockedColumns|(1 << idx)) !== blockedColumns
-        && (blockedMajor|(1 << idx+i)) !== blockedMajor
-        && (blockedMinor|(1 << idx-i)) !== blockedMinor
-        ){
-        if (i === n-1){
-          solutionCount++;
-        } else {
-          blockedColumns = blockedColumns|(1 << idx);
-          blockedMajor = blockedMajor|(1 << idx+i);
-          blockedMinor = blockedMinor|(1 << idx-i);
-          goDeeper(i+1);
-          blockedColumns = blockedColumns^(1 << idx);
-          blockedMajor = blockedMajor^(1 << idx+i);
-          blockedMinor = blockedMinor^(1 << idx-i);
-        }
-      }
-    };
+  if(n % 2 === 1){
+    launchSolverWorker(k, 1);
   }
 
 };
-
-Math.base = function base(n, to, from) {
-     return parseInt(n, from || 10).toString(to);
-}
 
 window.timeIt = function(f){
   return function() {
